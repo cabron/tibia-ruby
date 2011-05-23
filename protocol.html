@@ -1,0 +1,145 @@
+	value					bits			description
+
+LOGIN PACKET:
+	1						8			packet ID
+	1 or 2					16			operating system: linux 1, windows 2
+	854						16			version without dot
+	0x439D5A33				32			.dat file version
+	0x439852BE				32			.spr file version
+	0x4450C8D8				32			.pic file version
+	RSA						128*8		RSA encrypted block
+	{
+		0					8			it must be 0
+		(random)				128			XTEA key
+		length of accname		16
+		"accname"			length*8		account name; string in ASCII without null byte
+		length of pass		16
+		"pass"				length*8		password; string in ASCII without null byte
+		(hardware data)		?			RAM, screen resolution, processor, graph card type, video ram, FPS
+		(any(?))				?			padding; RSA is a block cipher - it must encrypt 128 bytes or 256 bytes etc.
+	}
+
+GAME LOGIN PACKET:
+	10						8			packet ID
+	1 or 2					16			operating system: linux 1, windows 2
+	854						16			version without dot
+	RSA						128*8		RSA encrypted block
+	{
+		0					8			it must be 0
+		(random)				128			XTEA key
+		0 or 1				8			GM flag: normal character 0, GM 1
+		length of accname		16
+		"accname"			length*8		account name; string in ASCII without null byte
+		length of character	16
+		"character"			length*8		character name; string in ASCII without null byte
+		length of pass		16
+		"pass"				length*8		password; string in ASCII without null byte
+		(security bytes)		5*8			security bytes received from server
+		(any(?))				?			padding; RSA is a block cipher - it must encrypt 128 bytes or 256 bytes etc.
+	}
+
+MESSAGE PACKET
+	ENCRYPTED
+6118106990964c81b48e9319acf7f95b6e34a2698fd247f8e61934f1121cd146f86ae543315711a2b0a79d3fdd45a2450190b987
+a . . i . . L . . . . . . . . . n 4 . i . . G . . . 4 . . . . F . j . C 1 W . . . . . . . E . E . . . . 
+	DECRYPTED WITH XTEA
+2b00  0a  2800  4f6e6c7920636c69656e747320776974682070726f746f636f6c20382e353420616c6c6f77656421  333333
+. .   .   . .   O n l y   c l i e n t s   w i t h   p r o t o c o l   8 . 5 4   a l l o w e d .   3 3 3
+
+MOTD + CHARACTER LIST
+d050e566  434468fdf177a2427ef30072b7786d27f2f8c25efd110627570d45ae549443f52aa44b07c25d650847720f485639e217d201ed28c792618d3c7d3a735d53cfd40a74d348b06df123a1c250fbe8b842f9ecdec328a19ce7cf48657d5167686fd700de7738f85f73be8e5c40c1284388fa52feed3506e04f7a3629e6209e37de50e30b23aeb77e09e5a75279fc6b6fce8d0a74d348b06df123778bc9ceeaeb83c8
+. P . f   C D h . . w . B . . . r . x m . . . . . . . . . W . E . T . C . . . K . . . e . G r . H V 9 . . . . . . . . a . . . . s . S . . . t . H . m . . . . P . . . B . . . . . . . . . H e . Q g h o . . . w 8 . . s . . . . . . C . . R . . 5 . . O z 6 . .   . 7 . P . . . . . . . . . R y . k o . . . t . H . m . . w . . . . . . . 
+9b00  14  2200  320a57656c636f6d6520746f2074686520466f72676f7474656e2053657276657221  64  04  0f00  4163636f756e74204d616e61676572  0900  466f72676f7474656e  7f000101  041c  0500  4c6f6c656b  0800  7265636f72646564  7f000101  041c  0a00  476f4420436162726f4e  0900  466f72676f7474656e  7f000101  041c  0900  476f442072746f6970  0900  466f72676f7474656e  7f000101  041c  0000  333333
+. .   .   . .   2 . W e l c o m e   t o   t h e   F o r g o t t e n   S e r v e r !   d   .   . .   A c c o u n t   M a n a g e r   . .   F o r g o t t e n   . . . .   . .   . .   L o l e k   . .   r e c o r d e d   . . . .   . .   . .   G o D   C a b r o N   . .   F o r g o t t e n   . . . .   . .   . .   G o D   r t o i p   . .   F o r g o t t e n   . . . .   . .   . .   3 3 3 
+LEN	MOTD  LEN	MOTD TEXT
+
+9900  14  2200  320a57656c636f6d6520746f2074686520466f72676f7474656e2073657276657221  64  04  0f00  4163636f756e74204d616e61676572  0900  466f72676f7474656e  7f000101  041c  0500  4c6f6c656b  0800  7265636f72646564  7f000101  041c  0a00  476f4420436162726f4e  0900  466f72676f7474656e  7f000101  041c  0900  476f442072746f6970  0900  466f72676f7474656e  7f000101  041c  0000  000000
+. .   .   . .   2 . W e l c o m e   t o   t h e   F o r g o t t e n   s e r v e r !   d   .   . .   A c c o u n t   M a n a g e r   . .   F o r g o t t e n   . . . .   . .   . .   L o l e k   . .   r e c o r d e d   . . . .   . .   . .   G o D   C a b r o N   . .   F o r g o t t e n   . . . .   . .   . .   G o D   r t o i p   . .   F o r g o t t e n   . . . .   . .   . .   . . .
+
+9900142200320a57656c636f6d6520746f2074686520466f72676f7474656e207365727665722164040f004163636f756e74204d616e616765720900466f72676f7474656e7f000101041c05004c6f6c656b08007265636f726465647f000101041c0a00476f4420436162726f4e0900466f72676f7474656e7f000101041c0900476f442072746f69700900466f72676f7474656e7f000101041c0000333333
+. . . . . 2 . W e l c o m e   t o   t h e   F o r g o t t e n   s e r v e r . d . . . A c c o u n t   M a n a g e r . . F o r g o t t e n . . . . . . . . L o l e k . . r e c o r d e d . . . . . . . . G o D   C a b r o N . . F o r g o t t e n . . . . . . . . G o D   r t o i p . . F o r g o t t e n . . . . . . . . 3 3 3
+
+MY MOTD+CHARLIST - XTEA DECRYPTED 64
+3e00  14  1800  330a57656c636f6d6520746f205275627920736572766572  64  01  0c00  4d7920436861726163746572  0b00  5275627920736572766572  0101007f  041c
+. .   .   . .   3 . W e l c o m e   t o   R u b y   s e r v e r   d   .   . .   M y   C h a r a c t e r   . .   R u b y   s e r v e r   . . . .   . . 
+
+9b00142200320a57656c636f6d6520746f2074686520466f72676f7474656e205365727665722164040f004163636f756e74204d616e616765720900466f72676f7474656e7f000101041c05004c6f6c656b08007265636f726465647f000101041c0a00476f4420436162726f4e0900466f72676f7474656e7f000101041c0900476f442072746f69700900466f72676f7474656e7f000101041c0000333333
+. . . . . 2 . W e l c o m e   t o   t h e   F o r g o t t e n   S e r v e r . d . . . A c c o u n t   M a n a g e r . . F o r g o t t e n . . . . . . . . L o l e k . . r e c o r d e d . . . . . . . . G o D   C a b r o N . . F o r g o t t e n . . . . . . . . G o D   r t o i p . . F o r g o t t e n . . . . . . . . 3 3 3
+
+TICKET 0x1F 8
+06001f348d000006
+. . . 4 . . . . 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	value					bits			description
+
+LOGIN PACKET:
+	1						8			packet ID
+	1 or 2					16			operating system: linux 1, windows 2
+	854						16			version without dot
+	0x439D5A33				32			.dat file version
+	0x439852BE				32			.spr file version
+	0x4450C8D8				32			.pic file version
+	RSA						128*8		RSA encrypted block
+	{
+		0					8			it must be 0
+		(random)				128			XTEA key
+		length of accname		16
+		"accname"			length*8		account name; string in ASCII without null byte
+		length of pass		16
+		"pass"				length*8		password; string in ASCII without null byte
+		(hardware data)		?			RAM, screen resolution, processor, graph card type, video ram, FPS
+		(any(?))				?			padding; RSA is a block cipher - it must encrypt 128 bytes or 256 bytes etc.
+	}
+
+GAME LOGIN PACKET:
+	10						8			packet ID
+	1 or 2					16			operating system: linux 1, windows 2
+	854						16			version without dot
+	RSA						128*8		RSA encrypted block
+	{
+		0					8			it must be 0
+		(random)				128			XTEA key
+		0 or 1				8			GM flag: normal character 0, GM 1
+		length of accname		16
+		"accname"			length*8		account name; string in ASCII without null byte
+		length of character	16
+		"character"			length*8		character name; string in ASCII without null byte
+		length of pass		16
+		"pass"				length*8		password; string in ASCII without null byte
+		(security bytes)		5*8			security bytes received from server
+		(any(?))				?			padding; RSA is a block cipher - it must encrypt 128 bytes or 256 bytes etc.
+	}
+
+MESSAGE PACKET
+	ENCRYPTED
+6118106990964c81b48e9319acf7f95b6e34a2698fd247f8e61934f1121cd146f86ae543315711a2b0a79d3fdd45a2450190b987
+a . . i . . L . . . . . . . . . n 4 . i . . G . . . 4 . . . . F . j . C 1 W . . . . . . . E . E . . . . 
+	DECRYPTED WITH XTEA
+2b00  0a  2800  4f6e6c7920636c69656e747320776974682070726f746f636f6c20382e353420616c6c6f77656421  333333
+. .   .   . .   O n l y   c l i e n t s   w i t h   p r o t o c o l   8 . 5 4   a l l o w e d .   3 3 3
+
+MOTD + CHARACTER LIST
+d050e566  434468fdf177a2427ef30072b7786d27f2f8c25efd110627570d45ae549443f52aa44b07c25d650847720f485639e217d201ed28c792618d3c7d3a735d53cfd40a74d348b06df123a1c250fbe8b842f9ecdec328a19ce7cf48657d5167686fd700de7738f85f73be8e5c40c1284388fa52feed3506e04f7a3629e6209e37de50e30b23aeb77e09e5a75279fc6b6fce8d0a74d348b06df123778bc9ceeaeb83c8
+. P . f   C D h . . w . B . . . r . x m . . . . . . . . . W . E . T . C . . . K . . . e . G r . H V 9 . . . . . . . . a . . . . s . S . . . t . H . m . . . . P . . . B . . . . . . . . . H e . Q g h o . . . w 8 . . s . . . . . . C . . R . . 5 . . O z 6 . .   . 7 . P . . . . . . . . . R y . k o . . . t . H . m . . w . . . . . . . 
+9b00  14  2200  320a57656c636f6d6520746f2074686520466f72676f7474656e2053657276657221  64  04  0f00  4163636f756e74204d616e61676572  0900  466f72676f7474656e  7f000101  041c  0500  4c6f6c656b  0800  7265636f72646564  7f000101  041c  0a00  476f4420436162726f4e  0900  466f72676f7474656e  7f000101  041c  0900  476f442072746f6970  0900  466f72676f7474656e  7f000101  041c  0000  333333
+. .   .   . .   2 . W e l c o m e   t o   t h e   F o r g o t t e n   S e r v e r !   d   .   . .   A c c o u n t   M a n a g e r   . .   F o r g o t t e n   . . . .   . .   . .   L o l e k   . .   r e c o r d e d   . . . .   . .   . .   G o D   C a b r o N   . .   F o r g o t t e n   . . . .   . .   . .   G o D   r t o i p   . .   F o r g o t t e n   . . . .   . .   . .   3 3 3 
+LEN	MOTD  LEN	MOTD TEXT
+
+9900  14  2200  320a57656c636f6d6520746f2074686520466f72676f7474656e2073657276657221  64  04  0f00  4163636f756e74204d616e61676572  0900  466f72676f7474656e  7f000101  041c  0500  4c6f6c656b  0800  7265636f72646564  7f000101  041c  0a00  476f4420436162726f4e  0900  466f72676f7474656e  7f000101  041c  0900  476f442072746f6970  0900  466f72676f7474656e  7f000101  041c  0000  000000
+. .   .   . .   2 . W e l c o m e   t o   t h e   F o r g o t t e n   s e r v e r !   d   .   . .   A c c o u n t   M a n a g e r   . .   F o r g o t t e n   . . . .   . .   . .   L o l e k   . .   r e c o r d e d   . . . .   . .   . .   G o D   C a b r o N   . .   F o r g o t t e n   . . . .   . .   . .   G o D   r t o i p   . .   F o r g o t t e n   . . . .   . .   . .   . . .
+
+9900142200320a57656c636f6d6520746f2074686520466f72676f7474656e207365727665722164040f004163636f756e74204d616e616765720900466f72676f7474656e7f000101041c05004c6f6c656b08007265636f726465647f000101041c0a00476f4420436162726f4e0900466f72676f7474656e7f000101041c0900476f442072746f69700900466f72676f7474656e7f000101041c0000333333
+. . . . . 2 . W e l c o m e   t o   t h e   F o r g o t t e n   s e r v e r . d . . . A c c o u n t   M a n a g e r . . F o r g o t t e n . . . . . . . . L o l e k . . r e c o r d e d . . . . . . . . G o D   C a b r o N . . F o r g o t t e n . . . . . . . . G o D   r t o i p . . F o r g o t t e n . . . . . . . . 3 3 3
+
+MY MOTD+CHARLIST - XTEA DECRYPTED 64
+3e00  14  1800  330a57656c636f6d6520746f205275627920736572766572  64  01  0c00  4d7920436861726163746572  0b00  5275627920736572766572  0101007f  041c
+. .   .   . .   3 . W e l c o m e   t o   R u b y   s e r v e r   d   .   . .   M y   C h a r a c t e r   . .   R u b y   s e r v e r   . . . .   . . 
+
+9b00142200320a57656c636f6d6520746f2074686520466f72676f7474656e205365727665722164040f004163636f756e74204d616e616765720900466f72676f7474656e7f000101041c05004c6f6c656b08007265636f726465647f000101041c0a00476f4420436162726f4e0900466f72676f7474656e7f000101041c0900476f442072746f69700900466f72676f7474656e7f000101041c0000333333
+. . . . . 2 . W e l c o m e   t o   t h e   F o r g o t t e n   S e r v e r . d . . . A c c o u n t   M a n a g e r . . F o r g o t t e n . . . . . . . . L o l e k . . r e c o r d e d . . . . . . . . G o D   C a b r o N . . F o r g o t t e n . . . . . . . . G o D   r t o i p . . F o r g o t t e n . . . . . . . . 3 3 3
+
+TICKET 0x1F 8
+06001f348d000006
+. . . 4 . . . . 
