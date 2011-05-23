@@ -25,8 +25,10 @@ keyp = RSA::KeyPair.new(key, key)
 
 s = TCPSocket.open("localhost", 7173)
 
-acc = "pax005"
-pass = "firmapax1"
+puts "Enter account name:"
+acc = gets
+puts "Enter password:"
+pass = gets
 
 xtea = XTEA.new
 
