@@ -150,11 +150,11 @@ if not o.v
 	client.attach {
 		if ver = ini.inihash.select {|k, v| client[v['RSA'].to_i(16)-1].match(/\000[0-9]{3}/)}.first
 			o.v = ver[0]
-			o.rsa = ini[o.v]['RSA'].to_i 16
-			o.servers = ini[o.v]['Servers'].to_i
-			o.portstep = ini[o.v]['PortStep'].to_i 16
-			o.serverstep = ini[o.v]['ServerStep'].to_i 16
-			o.loginservers = ini[o.v]['LoginServersStart'].to_i 16
+			o.rsa = ver[1]['RSA'].to_i 16
+			o.servers = ver[1]['Servers'].to_i
+			o.portstep = ver[1]['PortStep'].to_i 16
+			o.serverstep = ver[1]['ServerStep'].to_i 16
+			o.loginservers = ver[1]['LoginServersStart'].to_i 16
 		end
 	}
 	
@@ -164,7 +164,7 @@ if not o.v
 	end
 end
 
-puts "### #{o.v} #{proc.pid}"
+puts "Version: #{o.v}"
 
 client.attach {
 	o.servers.times {|i| client[o.loginservers + i*o.serverstep] = o.ip}
